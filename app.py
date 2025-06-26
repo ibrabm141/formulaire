@@ -12,9 +12,9 @@ app.secret_key = 'your_super_secret_key'  # مفتاح الجلسة
 def create_database_if_not_exists():
     try:
         conn = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='MysqL#Admin2025@'
+            host='bibra12.mysql.pythonanywhere-services.com',  # غيّر هنا
+            user='bibra12',                                   # غيّر إلى اسم المستخدم الخاص بك في PythonAnywhere
+            password='MysqL#Admin2025@'                        # كلمة المرور الخاصة بقاعدة البيانات
         )
         cursor = conn.cursor()
         cursor.execute("CREATE DATABASE IF NOT EXISTS survey_db DEFAULT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'")
@@ -86,10 +86,8 @@ def init_db():
 
 @app.route('/')
 def index():
-    email = session.get('user_email')
-    if not email:
-        return redirect('/login')  # أو أي صفحة تسجيل دخول عندك
-    return render_template('index.html', email=email)
+    return render_template('index.html')
+
 
 @app.route('/submit', methods=['POST'])
 def submit():
