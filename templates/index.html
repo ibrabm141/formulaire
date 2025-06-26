@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>استبيان التربية الإسلامية والوعي الأخلاقي الرقمي</title>
+
+    <!-- خط عربي رائع -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* عام */
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Cairo", Arial, sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #eee;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background 0.5s ease, color 0.5s ease;
+        overflow-x: hidden;
+      }
+      body.light {
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+        color: #222;
+      }
+
+      .container {
+        background: rgba(0, 0, 0, 0.75);
+        padding: 30px 40px;
+        border-radius: 20px;
+        max-width: 720px;
+        width: 95%;
+        box-shadow: 0 0 40px #00bfffcc;
+        backdrop-filter: blur(10px);
+        transition: background 0.5s ease, color 0.5s ease;
+        position: relative;
+      }
+      body.light .container {
+        background: #fff;
+        color: #222;
+        box-shadow: 0 0 40px #1e90ff55;
+        backdrop-filter: none;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        font-size: 2.6rem;
+        text-shadow: 0 0 8px #00bfffcc;
+      }
+      body.light h2 {
+        text-shadow: none;
+        color: #1e3c72;
+      }
+
+      form label {
+        font-weight: 700;
+        margin-top: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.15rem;
+        cursor: pointer;
+      }
+
+      form label .info-icon {
+        color: #00bfff;
+        cursor: help;
+        font-size: 1.1rem;
+        transition: color 0.3s ease;
+      }
+      form label .info-icon:hover {
+        color: #66d9ff;
+      }
+
+      select,
+      input[type="checkbox"] {
+        margin-top: 8px;
+        border-radius: 15px;
+        border: none;
+        padding: 14px 20px;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        transition: box-shadow 0.3s ease, background 0.3s ease;
+        background: rgba(255 255 255 / 0.1);
+        color: inherit;
+        outline: none;
+        cursor: pointer;
+        user-select: none;
+      }
+      body.light select {
+        background: #f0f8ff;
+        color: #333;
+        box-shadow: none;
+      }
+      select:focus {
+        box-shadow: 0 0 12px #00bfffdd;
+        background: rgba(255 255 255 / 0.25);
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+        transform: scale(1.4);
+        margin-left: 14px;
+        cursor: pointer;
+        accent-color: #00bfff;
+        filter: drop-shadow(0 0 1px #00bfff);
+      }
+
+      /* خيارات متعددة */
+      .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 8px;
+      }
+      .checkbox-group label {
+        flex: 1 1 45%;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        margin-top: 38px;
+        padding: 18px 0;
+        border-radius: 18px;
+        border: none;
+        background: linear-gradient(90deg, #00bfff, #1e90ff);
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 10px 30px #00bfffbb;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        user-select: none;
+        position: relative;
+        overflow: hidden;
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #1e90ff, #00bfff);
+        box-shadow: 0 12px 35px #1e90ffcc;
+      }
+      button[type="submit"]:active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 200%;
+        height: 200%;
+        background: rgba(255 255 255 / 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+      }
+      @keyframes ripple {
+        to {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0;
+        }
+      }
+
+      /* زر عرض النتائج */
+      .results-btn {
+        margin-top: 30px;
+        background: transparent;
+        border-radius: 12px;
+        padding: 16px 30px;
+        color: #00bfff;
+        font-weight: 700;
+        font-size: 1.25rem;
+        border: 2.5px solid #00bfff;
+        cursor: pointer;
+        transition: background 0.3s ease, color 0.3s ease;
+        display: inline-block;
+        text-align: center;
+        user-select: none;
+        text-decoration: none;
+        box-shadow: 0 0 12px #00bfff88;
+      }
+      .results-btn:hover {
+        background: #00bfff;
+        color: #222;
+        box-shadow: 0 0 25px #00bfffcc;
+      }
+
+      /* رسائل الخطأ */
+      .error-msg {
+        color: #ff5252;
+        font-size: 0.9rem;
+        margin-top: 6px;
+        font-weight: 700;
+        display: none;
+      }
+
+      /* صندوق معلومات التلميحات */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 240px;
+        background-color: #00bfffcc;
+        color: #000;
+        text-align: right;
+        border-radius: 10px;
+        padding: 12px 16px;
+        position: absolute;
+        z-index: 1;
+        top: -10px;
+        right: 105%;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.95rem;
+        user-select: none;
+        box-shadow: 0 0 15px #00bfffcc;
+      }
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      /* رسالة الإرسال */
+      #loadingMessage {
+        margin-top: 25px;
+        color: #00bfff;
+        font-weight: 900;
+        text-align: center;
+        font-size: 1.15rem;
+        display: none;
+        user-select: none;
+      }
+
+      /* الوضع الليلي */
+      .dark-mode {
+        background: #121212 !important;
+        color: #ccc !important;
+      }
+      .dark-mode .container {
+        background: rgba(10, 10, 10, 0.9) !important;
+        box-shadow: 0 0 30px #00bfffbb !important;
+        color: #ccc !important;
+      }
+      .dark-mode select {
+        background: #222 !important;
+        color: #eee !important;
+        border: none !important;
+        box-shadow: 0 0 10px #00bfffcc !important;
+      }
+      .dark-mode input[type="checkbox"] {
+        accent-color: #00bfff !important;
+      }
+      .dark-mode button[type="submit"] {
+        background: linear-gradient(90deg, #1e90ff, #00bfff) !important;
+        color: #fff !important;
+        box-shadow: 0 8px 25px #1e90ffcc !important;
+      }
+      .dark-mode button[type="submit"]:hover {
+        background: linear-gradient(90deg, #00bfff, #1e90ff) !important;
+        box-shadow: 0 10px 30px #00bfffcc !important;
+      }
+
+      /* زر الوضع الليلي */
+      #darkModeToggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #00bfff;
+        color: #222;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.3rem;
+        user-select: none;
+        box-shadow: 0 6px 20px #00bfffcc;
+        transition: background 0.3s ease;
+        z-index: 10000;
+      }
+      #darkModeToggle:hover {
+        background: #1e90ff;
+        color: #fff;
+      }
+
+      /* شريط التقدم */
+      #progressContainer {
+        background: rgba(255 255 255 / 0.15);
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        height: 14px;
+      }
+      #progressBar {
+        height: 100%;
+        width: 0;
+        background: #00bfff;
+        transition: width 0.5s ease;
+        box-shadow: 0 0 15px #00bfffcc;
+      }
+
+      input[type="email"],
+      select {
+        margin-top: 8px;
+        border-radius: 15px;
+        border: none;
+        padding: 14px 20px;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        transition: box-shadow 0.3s ease, background 0.3s ease;
+        background: rgba(255 255 255 / 0.1);
+        color: inherit;
+        outline: none;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      body.light input[type="email"] {
+        background: #f0f8ff;
+        color: #333;
+        box-shadow: none;
+      }
+
+      input[type="email"]:focus,
+      select:focus {
+        box-shadow: 0 0 12px #00bfffdd;
+        background: rgba(255 255 255 / 0.25);
+        outline: none;
+      }
+      .input-error {
+        border-color: #ff4d4d !important;
+        background-color: #fff0f0 !important;
+      }
+
+      .error-msg {
+        color: #ff4d4d;
+        font-size: 0.85rem;
+        margin-top: 4px;
+        display: none;
+      }
+      .error-msg.active {
+        display: block;
+      }
+      .admin-btn {
+        padding: 8px 16px;
+        background: #007bff;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        transition: background 0.3s ease;
+      }
+      .admin-btn:hover {
+        background: #0056b3;
+      }
+
+      #adminIconBtn {
+        position: fixed; /* بدل absolute إلى fixed */
+        top: 15px;
+        right: 60px;
+        background: white;
+        border: 2px solid #00bfff;
+        border-radius: 50%;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s, transform 0.3s;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        z-index: 1000;
+      }
+
+      body.dark-mode {
+        background-color: #121212;
+        color: #eee;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      body.light {
+        background-color: #fff;
+        color: #222;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .container {
+          padding: 25px 30px;
+        }
+        h2 {
+          font-size: 1.9rem;
+        }
+        button[type="submit"] {
+          font-size: 1.25rem;
+        }
+        .results-btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- أزرار عليا: مشرف + وضع ليلي -->
+    <div
+      style="
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 12px;
+        z-index: 9999;
+      "
+    >
+      <!-- زر المشرف -->
+      <a
+        href="/login"
+        class="admin-btn"
+        aria-label="صفحة المشرف"
+        title="لوحة المشرف"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+          color: white;
+          padding: 10px 16px;
+          border-radius: 12px;
+          font-weight: 700;
+          font-size: 1.1rem;
+          text-decoration: none;
+          cursor: pointer;
+          box-shadow: 0 6px 12px rgb(38 78 162 / 0.5);
+          transition: background 0.4s ease, box-shadow 0.4s ease;
+        "
+        onmouseover="this.style.background='linear-gradient(135deg, #4b0da8 0%, #1c5bcc 100%)'; this.style.boxShadow='0 8px 16px rgb(28 54 114 / 0.7)'"
+        onmouseout="this.style.background='linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)'; this.style.boxShadow='0 6px 12px rgb(38 78 162 / 0.5)'"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24"
+          width="24"
+          fill="white"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm6.94 1.06c.04-.32.06-.65.06-1 0-.35-.02-.68-.06-1l2.03-1.58c.18-.14.22-.41.1-.61l-1.92-3.32c-.12-.2-.38-.28-.6-.2l-2.39.96a7.88 7.88 0 00-1.73-1l-.36-2.54a.49.49 0 00-.48-.42h-3.84a.5.5 0 00-.48.42l-.36 2.54a7.87 7.87 0 00-1.73 1l-2.39-.96a.49.49 0 00-.6.2l-1.92 3.32a.5.5 0 00.1.61l2.03 1.58c-.04.32-.06.65-.06 1 0 .35.02.68.06 1l-2.03 1.58a.5.5 0 00-.1.61l1.92 3.32c.12.2.38.28.6.2l2.39-.96c.52.4 1.1.72 1.73 1l.36 2.54a.5.5 0 00.48.42h3.84a.5.5 0 00.48-.42l.36-2.54c.63-.28 1.21-.6 1.73-1l2.39.96c.22.08.48 0 .6-.2l1.92-3.32a.5.5 0 00-.1-.61l-2.03-1.58z"
+          />
+        </svg>
+        مشرف
+      </a>
+
+      <!-- زر الوضع الليلي -->
+      <button
+        id="darkModeToggle"
+        class="icon-btn"
+        aria-label="تبديل الوضع الليلي"
+        title="الوضع الليلي"
+        type="button"
+        style="
+          background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+          border: none;
+          border-radius: 50%;
+          padding: 10px;
+          width: 44px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 6px 12px rgb(38 78 162 / 0.5);
+          transition: background 0.4s ease, box-shadow 0.4s ease;
+          color: white;
+        "
+        onmouseover="this.style.background='linear-gradient(135deg, #4b0da8 0%, #1c5bcc 100%)'; this.style.boxShadow='0 8px 16px rgb(28 54 114 / 0.7)'"
+        onmouseout="this.style.background='linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)'; this.style.boxShadow='0 6px 12px rgb(38 78 162 / 0.5)'"
+      >
+        <!-- أيقونة القمر -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24"
+          width="24"
+          fill="white"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M20.742 13.045a8.088 8.088 0 01-9.787-9.787 1 1 0 00-1.412-1.089A10 10 0 1019.83 14.457a1 1 0 00.912-1.412z"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="container" role="main" aria-labelledby="formTitle">
+      <h2 id="formTitle">استبيان: التربية الإسلامية والوعي الأخلاقي الرقمي</h2>
+
+      <!-- شريط التقدم -->
+      <div id="progressContainer" aria-hidden="true">
+        <div id="progressBar"></div>
+      </div>
+
+      <form action="/submit" method="POST" novalidate autocomplete="on">
+        <div
+          style="
+            display: flex;
+            max-width: 280px;
+            margin-top: 8px;
+            direction: ltr;
+            margin-right: 50px;
+          "
+        >
+          <input
+            type="text"
+            id="email"
+            name="email"
+            placeholder="أدخل اسم المستخدم"
+            autocomplete="username"
+            required
+            style="
+              flex: 1;
+              padding: 10px 14px;
+              border: 1.5px solid #00bfff;
+              border-right: none;
+              border-radius: 12px 0 0 12px;
+              font-size: 0.95rem;
+              color: #333;
+              outline: none;
+              transition: border-color 0.3s ease;
+              height: 38px;
+              direction: ltr;
+              text-align: left;
+            "
+            onfocus="this.style.borderColor='#1e90ff'"
+            onblur="this.style.borderColor='#00bfff'"
+          />
+          <span
+            style="
+              padding: 10px 14px;
+              background: #00bfff;
+              color: white;
+              border: 1.5px solid #00bfff;
+              border-left: none;
+              border-radius: 0 12px 12px 0;
+              font-size: 0.95rem;
+              display: flex;
+              align-items: center;
+              user-select: none;
+              height: 38px;
+              direction: ltr;
+            "
+          >
+            @gmail.com
+          </span>
+        </div>
+
+        <label for="age">
+          كم عمرك؟
+          <span
+            class="tooltip"
+            tabindex="0"
+            aria-label="اختر الفئة العمرية التي تناسبك"
+          >
+            <svg
+              class="info-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              height="20"
+              width="20"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 0C5.383 0 0 5.383 0 12c0 6.616 5.383 12 12 12s12-5.384 12-12c0-6.617-5.383-12-12-12zm0 18.533c-.993 0-1.8-.804-1.8-1.8s.807-1.8 1.8-1.8 1.8.804 1.8 1.8-.807 1.8-1.8 1.8zm2.034-7.612c-.124.303-.45.568-.925.568H10.8v3h1.2v-1.35h.425c.618 0 1.14-.426 1.14-1.056 0-.732-.648-1.15-1.317-1.15-.725 0-1.24.494-1.312 1.04l1.195.29z"
+              />
+            </svg>
+            <span class="tooltiptext"
+              >اختر الفئة العمرية المناسبة لك من الخيارات</span
+            >
+          </span>
+        </label>
+        <select
+          id="age"
+          name="age"
+          required
+          aria-required="true"
+          aria-describedby="ageHelp"
+        >
+          <option value="" disabled selected>اختر عمرك</option>
+          <option value="أقل من 15 سنة">أقل من 15 سنة</option>
+          <option value="من 15 سنة إلى 18 سنة">من 15 سنة إلى 18 سنة</option>
+          <option value="أكثر من 18 سنة">أكثر من 18 سنة</option>
+        </select>
+
+        <label for="gender">
+          ما هو جنسك؟
+          <span class="tooltip" tabindex="0" aria-label="اختر جنسك">
+            <svg
+              class="info-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              height="20"
+              width="20"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 0C5.383 0 0 5.383 0 12c0 6.616 5.383 12 12 12s12-5.384 12-12c0-6.617-5.383-12-12-12zm-1 18h2v-2h-2v2zm0-4h2v-6h-2v6z"
+              />
+            </svg>
+            <span class="tooltiptext">اختر ذكر أو أنثى</span>
+          </span>
+        </label>
+        <select id="gender" name="gender" required aria-required="true">
+          <option value="" disabled selected>اختر جنسك</option>
+          <option value="ذكر">ذكر</option>
+          <option value="أنثى">أنثى</option>
+        </select>
+
+        <label for="level">
+          المستوى الدراسي:
+          <span class="tooltip" tabindex="0" aria-label="اختر مستواك الدراسي">
+            <svg
+              class="info-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              height="20"
+              width="20"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 0C5.383 0 0 5.383 0 12c0 6.616 5.383 12 12 12s12-5.384 12-12c0-6.617-5.383-12-12-12zm-1 18h2v-2h-2v2zm0-4h2v-6h-2v6z"
+              />
+            </svg>
+            <span class="tooltiptext">اختر مستواك التعليمي الحالي</span>
+          </span>
+        </label>
+        <select id="level" name="level" required aria-required="true">
+          <option value="" disabled selected>اختر مستواك الدراسي</option>
+          <option value="إعدادي">إعدادي</option>
+          <option value="الثانوي">الثانوي</option>
+          <option value="جامعي">جامعي</option>
+        </select>
+
+        <!-- أسئلة أخرى بنمط مماثل -->
+        <label for="q1"
+          >هل سمعت من قبل عن مصطلح "الأخلاق الرقمية" أو "الوعي الأخلاقي
+          الرقمي"؟</label
+        >
+        <select id="q1" name="q1" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+
+        <label for="q2"
+          >هل سبق لك أن درست موضوع "الأخلاق في الإسلام" ضمن دروس التربية
+          الإسلامية؟</label
+        >
+        <select id="q2" name="q2" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+
+        <label for="q3"
+          >هل تعتقد أن دروس التربية الإسلامية تؤثر في سلوكك داخل الفضاء
+          الرقمي؟</label
+        >
+        <select id="q3" name="q3" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="تؤثر بشكل كبير">تؤثر بشكل كبير</option>
+          <option value="تؤثر أحيانا">تؤثر أحيانا</option>
+          <option value="لا تؤثر">لا تؤثر</option>
+        </select>
+
+        <label for="q4"
+          >من وجهة نظرك، هل توجد علاقة بين التربية الإسلامية والأخلاق
+          الرقمية؟</label
+        >
+        <select id="q4" name="q4" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+
+        <label
+          >ما القيم الإسلامية التي تنطبق على التعامل الرقمي؟ (يمكن اختيار أكثر
+          من واحدة)</label
+        >
+        <div
+          class="checkbox-group"
+          role="group"
+          aria-label="القيم الإسلامية الرقمية"
+        >
+          <label
+            ><input type="checkbox" name="q5[]" value="الصدق" /> الصدق</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="الأمانة" />
+            الأمانة</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="احترام الخصوصية" />
+            احترام الخصوصية</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="التعاطف والرفق" />
+            التعاطف والرفق</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="تجنب الغيبة والنميمة" />
+            تجنب الغيبة والنميمة</label
+          >
+        </div>
+
+        <label for="q6"
+          >هل ساعدتك الأنشطة التعليمية في فهم القيم الأخلاقية الرقمية؟</label
+        >
+        <select id="q6" name="q6" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+
+        <label for="q7">كيف تتصرف عندما ترى منشورًا عنيفًا أو غير لائق؟</label>
+        <select id="q7" name="q7" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="أشارك به">أشارك به</option>
+          <option value="أتجاهله">أتجاهله</option>
+          <option value="أبلغ عنه أو أحذره">أبلغ عنه أو أحذره</option>
+        </select>
+
+        <label for="q8"
+          >هل تعتبر نشر الصور والمعلومات الشخصية على الإنترنت تصرفًا:</label
+        >
+        <select id="q8" name="q8" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="عاديا">عاديا</option>
+          <option value="محفوفا بالمخاطر">محفوفا بالمخاطر</option>
+          <option value="لا أعلم">لا أعلم</option>
+        </select>
+
+        <label for="q9"
+          >ما هو مصدر توجيهك الأساسي في التمييز بين الصواب والخطأ في الفضاء
+          الرقمي؟</label
+        >
+        <select id="q9" name="q9" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="الأسرة">الأسرة</option>
+          <option value="المدرسة/ مادة التربية الاسلامية">
+            المدرسة/ مادة التربية الاسلامية
+          </option>
+          <option value="الأصدقاء">الأصدقاء</option>
+          <option value="تجارب شخصية">تجارب شخصية</option>
+        </select>
+
+        <label for="q10"
+          >هل ينبغي إدراج مواضيع "الأخلاق الرقمية" ضمن دروس التربية
+          الإسلامية؟</label
+        >
+        <select id="q10" name="q10" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="نعم، ضروري جدا">نعم، ضروري جدا</option>
+          <option value="نعم، لكن بشكل جزئي">نعم، لكن بشكل جزئي</option>
+          <option value="لا أرى ضرورة">لا أرى ضرورة</option>
+        </select>
+
+        <label for="q11"
+          >هل سبق أن ندمت على تصرف قمت به في الإنترنت وتبيّن أنه منافٍ للأخلاق
+          الإسلامية؟</label
+        >
+        <select id="q11" name="q11" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+        </select>
+
+        <label for="q12">كيف يمكن تعزيز الأخلاق الرقمية بين التلاميذ؟</label>
+        <select id="q12" name="q12" required>
+          <option value="" disabled selected>اختر إجابتك</option>
+          <option value="عن طريق التربية الاسلامية">
+            عن طريق التربية الاسلامية
+          </option>
+          <option value="عبر حملات تحسيسية">عبر حملات تحسيسية</option>
+          <option value="من خلال الأسرة فقط">من خلال الأسرة فقط</option>
+          <option value="لا أعلم">لا أعلم</option>
+        </select>
+
+        <button type="submit" aria-label="إرسال استبيان">إرسال</button>
+      </form>
+
+      <div id="loadingMessage" role="alert" aria-live="assertive">
+        ... جاري الإرسال، يرجى الانتظار
+      </div>
+    </div>
+
+    <script>
+      // الوضع الليلي - حفظ التفضيل في localStorage
+      const toggleBtn = document.getElementById("darkModeToggle");
+      const body = document.body;
+      const loadingMessage = document.getElementById("loadingMessage");
+
+      function setTheme(theme) {
+        if (theme === "dark") {
+          body.classList.remove("light");
+          body.classList.add("dark-mode");
+          toggleBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" viewBox="0 0 24 24" fill="white">
+        <path d="M20.742 13.045a8.088 8.088 0 01-9.787-9.787 1 1 0 00-1.412-1.089A10 10 0 1019.83 14.457a1 1 0 00.912-1.412z"/>
+      </svg>
+    `;
+          toggleBtn.setAttribute("aria-label", "تبديل الوضع النهاري");
+        } else {
+          body.classList.remove("dark-mode");
+          body.classList.add("light");
+          toggleBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" viewBox="0 0 24 24" fill="white">
+        <path d="M6.76 4.84l-1.8-1.79L4.22 4.22l1.79 1.8 0.75-1.18zm10.45 14.32l1.79 1.8 0.71-0.71-1.8-1.79-0.7 0.7zM12 4V1h-1v3h1zm0 16v3h-1v-3h1zm8-8h3v-1h-3v1zm-16 0H1v-1h3v1zm2.05 7.19l-1.79 1.8 0.71 0.71 1.8-1.79-0.72-0.72zm12.9-12.9l1.8-1.79-0.71-0.71-1.79 1.8 0.7 0.7zM12 6a6 6 0 100 12 6 6 0 000-12z"/>
+      </svg>
+    `;
+          toggleBtn.setAttribute("aria-label", "تبديل الوضع الليلي");
+        }
+
+        localStorage.setItem("theme", theme);
+      }
+
+      // التبديل عند الضغط
+      toggleBtn.addEventListener("click", () => {
+        if (body.classList.contains("dark-mode")) {
+          setTheme("light");
+        } else {
+          setTheme("dark");
+        }
+      });
+
+      // تحميل التفضيل عند بدء الصفحة
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      setTheme(savedTheme);
+
+      // تحميل التفضيل عند بدء الصفحة
+
+      // شريط تقدم تعبئة الاستبيان
+      const form = document.querySelector("form");
+      const progressBar = document.getElementById("progressBar");
+      const totalQuestions = form.querySelectorAll(
+        'select, .checkbox-group input[type="checkbox"]'
+      ).length;
+
+      function updateProgress() {
+        let answered = 0;
+
+        form.querySelectorAll("select").forEach((sel) => {
+          if (sel.value && sel.value !== "") answered++;
+        });
+
+        // حساب إجابات checkboxes
+        const checkedBoxes = form.querySelectorAll(
+          '.checkbox-group input[type="checkbox"]:checked'
+        ).length;
+        if (checkedBoxes > 0) answered++;
+
+        const progressPercent = (answered / (totalQuestions + 1)) * 100;
+        progressBar.style.width = progressPercent + "%";
+      }
+
+      form.addEventListener("change", updateProgress);
+      updateProgress();
+
+      // رسالة التحميل عند الإرسال
+      form.addEventListener("submit", (e) => {
+        if (!form.checkValidity()) return;
+        loadingMessage.style.display = "block";
+      });
+    </script>
+    <!-- هذه الإضافة تكون داخل <script> في نهاية الصفحة -->
+    <script>
+      // ========== 1. تحقق البريد الإلكتروني المباشر ==========
+      const emailField = document.getElementById("email");
+
+      emailField.addEventListener("blur", () => {
+        let val = emailField.value.trim();
+        if (val !== "" && !val.includes("@")) {
+          emailField.value = val + "@gmail.com";
+        }
+      });
+
+      // ========== 2. Auto-Save في localStorage ==========
+      const fieldsToSave = form.querySelectorAll(
+        "select, input[type='checkbox'], input[type='email']"
+      );
+
+      function saveToLocal() {
+        let data = {};
+        fieldsToSave.forEach((field) => {
+          if (field.type === "checkbox") {
+            data[field.name + field.value] = field.checked;
+          } else {
+            data[field.name] = field.value;
+          }
+        });
+        localStorage.setItem("formData", JSON.stringify(data));
+      }
+
+      function loadFromLocal() {
+        const saved = JSON.parse(localStorage.getItem("formData"));
+        if (saved) {
+          fieldsToSave.forEach((field) => {
+            if (field.type === "checkbox") {
+              field.checked = saved[field.name + field.value] || false;
+            } else if (saved[field.name]) {
+              field.value = saved[field.name];
+            }
+          });
+        }
+        updateProgress();
+      }
+
+      form.addEventListener("input", saveToLocal);
+
+      // ========== 3. زر مسح البيانات ==========
+      const clearBtn = document.createElement("button");
+      clearBtn.textContent = "🗑️ مسح البيانات";
+      clearBtn.type = "button";
+      clearBtn.style.marginTop = "20px";
+      clearBtn.style.padding = "12px 20px";
+      clearBtn.style.borderRadius = "10px";
+      clearBtn.style.border = "2px solid #ff5252";
+      clearBtn.style.color = "#ff5252";
+      clearBtn.style.background = "transparent";
+      clearBtn.style.cursor = "pointer";
+      clearBtn.style.fontWeight = "bold";
+      clearBtn.addEventListener("click", () => {
+        localStorage.removeItem("formData");
+        location.reload();
+      });
+      form.appendChild(clearBtn);
+
+      // ========== 6. تنبيه مخصص للحقل الفارغ عند الإرسال ==========
+      form.addEventListener("submit", function (e) {
+        e.preventDefault(); // نمنع الإرسال مؤقتًا
+        let valid = true;
+
+        // إزالة الأخطاء السابقة
+        form.querySelectorAll(".error-msg").forEach((el) => el.remove());
+        form
+          .querySelectorAll(".input-error")
+          .forEach((el) => el.classList.remove("input-error"));
+
+        // التحقق من الحقول المطلوبة
+        form
+          .querySelectorAll("select[required], input[required]")
+          .forEach((field) => {
+            if (!field.value.trim()) {
+              valid = false;
+              showError(field, "يرجى تعبئة هذا الحقل");
+            }
+          });
+
+        // تحقق من checkbox واحدة على الأقل
+        const checkboxes = form.querySelectorAll(
+          '.checkbox-group input[type="checkbox"]'
+        );
+        const checked = Array.from(checkboxes).some((c) => c.checked);
+        if (!checked) {
+          valid = false;
+          const group = checkboxes[0].closest(".checkbox-group");
+          const error = document.createElement("div");
+          error.className = "error-msg active";
+          error.textContent = "يرجى اختيار قيمة واحدة على الأقل.";
+          group.appendChild(error);
+        }
+
+        // إذا كان كل شيء سليم، أرسل النموذج
+        if (valid) {
+          isSubmitting = true;
+          loadingMessage.style.display = "block";
+          form.submit();
+        }
+      });
+
+      function showError(field, message) {
+        field.classList.add("input-error");
+        const error = document.createElement("div");
+        error.className = "error-msg active";
+        error.textContent = message;
+        field.insertAdjacentElement("afterend", error);
+      }
+
+      // إزالة الخطأ عند التصحيح
+      form.querySelectorAll("select, input").forEach((field) => {
+        field.addEventListener("input", () => {
+          field.classList.remove("input-error");
+          const error = field.nextElementSibling;
+          if (error && error.classList.contains("error-msg")) {
+            error.remove();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

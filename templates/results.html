@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>نتائج الاستبيان - تقرير متقدم</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- استايلات + مكتبات -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap");
+
+      body {
+        font-family: "Cairo", sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #fff;
+        padding: 25px 10px;
+        overflow-x: hidden;
+        user-select: none;
+      }
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        background: rgba(0, 0, 0, 0.75);
+        border-radius: 20px;
+        padding: 25px 30px 40px 30px;
+        box-shadow: 0 0 40px #00bfffcc;
+        position: relative;
+      }
+      h2 {
+        text-align: center;
+        font-size: 2.8rem;
+        margin-bottom: 35px;
+        text-shadow: 0 0 15px #00bfffaa;
+        user-select: text;
+      }
+      .stat-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 20px;
+        border-radius: 15px;
+        flex: 1 1 180px;
+        text-align: center;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 0 15px #00d8ffcc;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: default;
+        user-select: none;
+      }
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 0 25px #00eaffdd;
+      }
+      .card h3 {
+        margin-bottom: 8px;
+        font-size: 1.4rem;
+        font-weight: 700;
+        user-select: text;
+      }
+      .card p {
+        font-size: 1.8rem;
+        font-weight: 900;
+        letter-spacing: 0.05em;
+        user-select: text;
+      }
+      .progress {
+        background-color: #ffffff33;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 12px;
+        height: 25px;
+        box-shadow: inset 0 0 10px #00000055;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        text-align: center;
+        line-height: 25px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: width 0.7s ease-in-out;
+        user-select: text;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+        background-color: #00000044;
+        color: #e0e0e0;
+        border-radius: 15px;
+        overflow: hidden;
+        user-select: text;
+      }
+      th,
+      td {
+        padding: 12px 10px;
+        text-align: center;
+        border-bottom: 1px solid #ffffff22;
+        font-size: 0.9rem;
+      }
+      th {
+        background-color: #00bfff55;
+        font-weight: 700;
+        font-size: 1rem;
+        user-select: text;
+      }
+      tr:hover {
+        background-color: #0072ff33 !important;
+      }
+      button {
+        padding: 12px 28px;
+        margin: 12px 8px;
+        font-weight: 900;
+        border-radius: 20px;
+        cursor: pointer;
+        border: none;
+        background: linear-gradient(135deg, #1abc9c, #16a085);
+        color: #fff;
+        font-size: 1rem;
+        box-shadow: 0 6px 10px #16a085aa;
+        transition: all 0.35s ease;
+        user-select: none;
+      }
+      button:hover {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        box-shadow: 0 8px 16px #16a085cc;
+        transform: translateY(-3px);
+      }
+      #confetti-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+      }
+      #genderChart {
+        max-width: 320px;
+        margin: 20px auto 35px;
+        user-select: none;
+      }
+      /* رسومات متحركة لمؤشرات الإحصائيات */
+      .count-up {
+        animation: countUpEffect 1.5s ease forwards;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      @keyframes countUpEffect {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* طباعة */
+      @media print {
+        button,
+        #confetti-canvas,
+        #genderChart {
+          display: none !important;
+        }
+        body {
+          background: #fff !important;
+          color: #000 !important;
+          user-select: text !important;
+        }
+        table {
+          background: none !important;
+          color: #000 !important;
+        }
+        th,
+        td {
+          border: 1px solid #000 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" role="main" aria-labelledby="title">
+      <h2 id="title" tabindex="0">
+        نتائج استبيان التربية الإسلامية والأخلاق الرقمية
+      </h2>
+
+      <section class="stat-cards" aria-label="إحصائيات عامة">
+        <article class="card" tabindex="0" aria-describedby="desc-total">
+          <h3>👥 المشاركون</h3>
+          <p
+            id="count-total"
+            class="count-up"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {{ total }} مشارك
+          </p>
+          <span id="desc-total" class="sr-only"
+            >عدد المشاركين في الاستبيان</span
+          >
+        </article>
+
+        <article class="card" tabindex="0" aria-describedby="desc-females">
+          <h3>👩‍🎓 نسبة الإناث</h3>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ female_percent }}"
+            aria-describedby="desc-females"
+          >
+            <div
+              class="progress-bar"
+              id="bar-females"
+              style="width: {{ female_percent }}%;"
+            >
+              {{ female_percent }}%
+            </div>
+          </div>
+          <p>العدد: {{ females_count }} مشاركة</p>
+          <span id="desc-females" class="sr-only"
+            >نسبة الإناث من إجمالي المشاركين</span
+          >
+        </article>
+
+        <article class="card" tabindex="0" aria-describedby="desc-males">
+          <h3>👨‍🎓 نسبة الذكور</h3>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ male_percent }}"
+            aria-describedby="desc-males"
+          >
+            <div
+              class="progress-bar"
+              id="bar-males"
+              style="width: {{ male_percent }}%;"
+            >
+              {{ male_percent }}%
+            </div>
+          </div>
+          <p>العدد: {{ males_count }} مشارك</p>
+          <span id="desc-males" class="sr-only"
+            >نسبة الذكور من إجمالي المشاركين</span
+          >
+        </article>
+
+        <article class="card" tabindex="0" aria-describedby="desc-age-under15">
+          <h3>🧒 نسبة الأطفال أقل من 15 سنة</h3>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ percent_under_15 }}"
+            aria-describedby="desc-age-under15"
+          >
+            <div
+              class="progress-bar"
+              style="width: {{ percent_under_15 }}%;"
+              id="bar-under-15"
+            >
+              {{ percent_under_15 }}%
+            </div>
+          </div>
+          <p>العدد: {{ under_15_count }} مشارك</p>
+          <span id="desc-age-under15" class="sr-only"
+            >نسبة الأطفال المشاركين في الاستبيان الذين تقل أعمارهم عن 15
+            سنة</span
+          >
+        </article>
+
+        <article class="card" tabindex="0" aria-describedby="desc-age-15-18">
+          <h3>🧑 نسبة الشباب بين 15 و18 سنة</h3>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ percent_15_18 }}"
+            aria-describedby="desc-age-15-18"
+          >
+            <div
+              class="progress-bar"
+              style="width: {{ percent_15_18 }}%;"
+              id="bar-15-18"
+            >
+              {{ percent_15_18 }}%
+            </div>
+          </div>
+          <p>العدد: {{ between_15_18_count }} مشارك</p>
+          <span id="desc-age-15-18" class="sr-only"
+            >نسبة الشباب المشاركين في الاستبيان الذين تتراوح أعمارهم بين 15 و18
+            سنة</span
+          >
+        </article>
+
+        <article class="card" tabindex="0" aria-describedby="desc-age-over18">
+          <h3>🧑‍🎓 نسبة الشباب أكثر من 18 سنة</h3>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ percent_over_18 }}"
+            aria-describedby="desc-age-over18"
+          >
+            <div
+              class="progress-bar"
+              style="width: {{ percent_over_18 }}%;"
+              id="bar-over-18"
+            >
+              {{ percent_over_18 }}%
+            </div>
+          </div>
+          <p>العدد: {{ over_18_count }} مشارك</p>
+          <span id="desc-age-over18" class="sr-only"
+            >نسبة الشباب المشاركين في الاستبيان الذين تزيد أعمارهم عن 18
+            سنة</span
+          >
+        </article>
+
+        <article class="card" tabindex="0">
+          <h3>🧠 ملخص الأسئلة</h3>
+          <button
+            onclick="generateQuestionStats()"
+            aria-label="عرض تحليل مفصل لكل الأسئلة"
+            title="عرض تحليل مفصل لكل الأسئلة"
+          >
+            📈 تحليل الأسئلة
+          </button>
+        </article>
+      </section>
+
+      <section style="text-align: center" aria-label="أزرار التحكم">
+        <button onclick="window.print()" aria-label="طباعة النتائج">
+          🖨 طباعة
+        </button>
+        <button
+          onclick="exportToExcel()"
+          aria-label="تصدير النتائج إلى ملف Excel"
+        >
+          📁 تصدير Excel
+        </button>
+        <button onclick="exportToPDF()" aria-label="تصدير النتائج إلى ملف PDF">
+          🧾 تصدير PDF
+        </button>
+        <button onclick="showSummary()" aria-label="عرض ملخص ذكي للإحصائيات">
+          📊 ملخص ذكي
+        </button>
+        <button
+          onclick="toggleDarkMode()"
+          aria-label="تبديل الوضع الليلي"
+          title="تبديل الوضع الليلي"
+        >
+          🌙
+        </button>
+        <button
+          onclick="downloadChartImage()"
+          aria-label="تحميل صورة الرسم البياني"
+          title="تحميل صورة الرسم البياني"
+        >
+          🖼️ تنزيل رسم بياني
+        </button>
+      </section>
+
+      <section aria-label="الرسم البياني لنسبة الجنسين">
+        <canvas
+          id="genderChart"
+          width="300"
+          height="300"
+          role="img"
+          aria-label="رسم بياني دائري لنسبة الجنسين"
+        ></canvas>
+      </section>
+
+      <section aria-label="جدول تفصيلي لإجابات الاستبيان">
+        <table id="dataTable" class="display" aria-describedby="table-desc">
+          <caption id="table-desc">
+            جدول تفصيلي لإجابات المشاركين في الاستبيان
+          </caption>
+          <thead>
+            <tr>
+              <th>البريد الإلكتروني</th>
+              <th>السن</th>
+              <th>الجنس</th>
+              <th>المستوى</th>
+              <th>السؤال 1</th>
+              <th>السؤال 2</th>
+              <th>السؤال 3</th>
+              <th>السؤال 4</th>
+              <th>السؤال 5</th>
+              <th>السؤال 6</th>
+              <th>السؤال 7</th>
+              <th>السؤال 8</th>
+              <th>السؤال 9</th>
+              <th>السؤال 10</th>
+              <th>السؤال 11</th>
+              <th>السؤال 12</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in responses %}
+            <tr>
+              <td>{{ r.email }}</td>
+              <td>{{ r.age }}</td>
+              <td>{{ r.gender }}</td>
+              <td>{{ r.level }}</td>
+              <td>{{ r.q1 }}</td>
+              <td>{{ r.q2 }}</td>
+              <td>{{ r.q3 }}</td>
+              <td>{{ r.q4 }}</td>
+              <td>{{ r.q5 }}</td>
+              <td>{{ r.q6 }}</td>
+              <td>{{ r.q7 }}</td>
+              <td>{{ r.q8 }}</td>
+              <td>{{ r.q9 }}</td>
+              <td>{{ r.q10 }}</td>
+              <td>{{ r.q11 }}</td>
+              <td>{{ r.q12 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- مكتبات JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- السكربت -->
+    <script>
+             function exportToExcel() {
+        // نفتح الرابط في نافذة جديدة أو نفس النافذة لتنزيل الملف
+        window.location.href = '/export_excel';
+      }
+
+
+          const responses = {{ responses|tojson }};
+          const genders = responses.map(r => r.gender);
+          const total = responses.length;
+
+          const countValues = arr => arr.reduce((acc, val) => {
+            acc[val] = (acc[val] || 0) + 1;
+            return acc;
+          }, {});
+
+          const genderCounts = countValues(genders);
+          const q1Counts = countValues(responses.map(r => r.q1));
+          const q2Counts = countValues(responses.map(r => r.q2));
+
+          // 1. تحديث الإحصائيات مع تأثير عداد
+          function animateStats() {
+            new CountUp("count-total", total, { duration: 2 }).start();
+            const percentFem = Math.round((genderCounts['أنثى'] || 0) / total * 100);
+            const percentMale = Math.round((genderCounts['ذكر'] || 0) / total * 100);
+
+            const barFem = document.getElementById("bar-females");
+            const barMale = document.getElementById("bar-males");
+            barFem.style.width = percentFem + "%";
+            barFem.textContent = percentFem + "%";
+            barMale.style.width = percentMale + "%";
+            barMale.textContent = percentMale + "%";
+
+            new CountUp("count-q1", q1Counts['نعم'] || 0, { duration: 2 }).start();
+            new CountUp("count-q2", q2Counts['نعم'] || 0, { duration: 2 }).start();
+          }
+
+          // 2. تصدير CSV
+          function exportToExcel() {
+            let table = document.getElementById("dataTable");
+            let csv = "";
+            for (let row of table.rows) {
+              let cells = Array.from(row.cells).map(cell => `"${cell.innerText.replace(/"/g, '""')}"`);
+              csv += cells.join(",") + "\n";
+            }
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "survey_results.csv";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+          }
+
+          // 3. تصدير PDF
+          async function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+              orientation: "landscape",
+              unit: "pt",
+              format: "a4"
+            });
+            doc.text("نتائج استبيان التربية الإسلامية والأخلاق الرقمية", 40, 40);
+            doc.autoTable({
+              html: '#dataTable',
+              startY: 60,
+              theme: 'grid',
+              styles: { fontSize: 8, cellPadding: 3 },
+              headStyles: { fillColor: [0, 123, 255] },
+            });
+            doc.save("survey_results.pdf");
+          }
+
+          // 4. ملخص ذكي + تأثير Confetti
+          function showSummary() {
+            const percentFem = Math.round((genderCounts['أنثى'] || 0) / total * 100);
+            const percentMale = Math.round((genderCounts['ذكر'] || 0) / total * 100);
+            let analysis = '';
+            if ((genderCounts['ذكر'] || 0) > (genderCounts['أنثى'] || 0)) {
+              analysis += '👨‍🎓 الذكور أكثر مشاركة في هذا الاستبيان.<br>';
+            }
+            if ((q1Counts['لا'] || 0) > (q1Counts['نعم'] || 0)) {
+              analysis += '⚠️ معظم المشاركين لم يسمعوا بمصطلح الأخلاق الرقمية.<br>';
+            }
+            if ((q2Counts['نعم'] || 0) > (q1Counts['نعم'] || 0)) {
+              analysis += '📚 الكثير درسوا الأخلاق الإسلامية حتى إن لم يسمعوا بالمصطلح.<br>';
+            }
+
+            Swal.fire({
+              title: '📊 ملخص النتائج',
+              html: `<p>📌 عدد المشاركين: <strong>${total}</strong></p>
+                     <p>👩‍🎓 نسبة الإناث: ${percentFem}%</p>
+                     <p>👨‍🎓 نسبة الذكور: ${percentMale}%</p>
+                     <p>❓ سمعوا بمصطلح الأخلاق الرقمية: ${q1Counts['نعم'] || 0} مشارك</p>
+                     <p>📚 درسوا الأخلاق: ${q2Counts['نعم'] || 0} مشارك</p>
+                     <hr><p>${analysis}</p>`,
+              icon: 'info',
+              backdrop: true,
+              showConfirmButton: true,
+              willClose: () => confetti.clear()
+            });
+            confetti.render();
+            setTimeout(() => confetti.clear(), 6000);
+          }
+
+          // 5. تحليل مفصل لكل الأسئلة مع عرض منسق
+          function generateQuestionStats() {
+            let html = '<div style="text-align:right; direction:rtl;">';
+            for (let i = 1; i <= 12; i++) {
+              const key = 'q' + i;
+              const values = responses.map(r => r[key]);
+              const counts = countValues(values);
+              html += `<h4>السؤال ${i}:</h4><ul>`;
+              for (const [answer, count] of Object.entries(counts)) {
+                html += `<li>${answer}: ${count} مشارك</li>`;
+              }
+              html += '</ul>';
+            }
+            html += '</div>';
+            Swal.fire({
+              title: '📊 تحليل الأسئلة المفصل',
+              html,
+              icon: 'info',
+              width: 600,
+              scrollbarPadding: false,
+              confirmButtonText: 'إغلاق'
+            });
+          }
+
+          // 6. رسم بياني دائري للنوع مع ألوان تفاعلية
+          function renderChart() {
+            const ctx = document.getElementById("genderChart").getContext("2d");
+            window.genderChartInstance = new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                labels: ["ذكر", "أنثى"],
+                datasets: [{
+                  data: [genderCounts['ذكر'] || 0, genderCounts['أنثى'] || 0],
+                  backgroundColor: ["#007bffcc", "#ff6384cc"],
+                  borderColor: ["#0056b3", "#cc416bcc"],
+                  borderWidth: 2,
+                  hoverOffset: 30,
+                  hoverBorderWidth: 4
+                }]
+              },
+              options: {
+                responsive: true,
+                animation: {
+                  animateScale: true,
+                  animateRotate: true,
+                },
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                    labels: {
+                      font: { size: 14, weight: 'bold' }
+                    }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: context => `${context.label}: ${context.parsed} مشارك`
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // 7. تفعيل datatable مع بحث وفلترة متقدمة
+          $(document).ready(() => {
+            $('#dataTable').DataTable({
+              language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/ar.json"
+              },
+              pageLength: 10,
+              lengthMenu: [5, 10, 25, 50],
+              responsive: true,
+              scrollX: true,
+              autoWidth: false,
+              ordering: true,
+              order: [[1, 'asc']]
+            });
+            animateStats();
+            renderChart();
+            confetti = new ConfettiGenerator({ target: 'confetti-canvas', max: 150, size: 1, clock: 25, rotate: true });
+          });
+
+          // 8. وضع الليل/النهار (Dark Mode Toggle)
+          let darkMode = false;
+          function toggleDarkMode() {
+            darkMode = !darkMode;
+            if(darkMode){
+              document.body.style.background = '#121212';
+              document.body.style.color = '#ccc';
+              document.querySelector('.container').style.background = 'rgba(40, 40, 40, 0.95)';
+              Swal.fire({
+                icon: 'success',
+                title: 'تم تفعيل الوضع الليلي',
+                timer: 2000,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false
+              });
+            } else {
+              document.body.style.background = 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)';
+              document.body.style.color = '#fff';
+              document.querySelector('.container').style.background = 'rgba(0, 0, 0, 0.75)';
+              Swal.fire({
+                icon: 'success',
+                title: 'تم تعطيل الوضع الليلي',
+                timer: 2000,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false
+              });
+            }
+          }
+
+          // 9. تحميل صورة للرسم البياني (Download chart image)
+          function downloadChartImage() {
+            if(window.genderChartInstance){
+              const url = window.genderChartInstance.toBase64Image();
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'gender_chart.png';
+              a.click();
+            } else {
+              Swal.fire('خطأ', 'الرسم البياني غير متوفر حالياً', 'error');
+            }
+          }
+
+          // 10. عداد تفاعلي على أزرار الإحصائيات (Hover effect)
+          document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+              card.style.boxShadow = '0 0 40px #00eaffdd';
+            });
+            card.addEventListener('mouseleave', () => {
+              card.style.boxShadow = '0 0 15px #00d8ffcc';
+            });
+          });
+    </script>
+  </body>
+</html>

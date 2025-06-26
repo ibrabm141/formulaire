@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>استبيان التربية الإسلامية والوعي الأخلاقي الرقمي - متطور</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome for icons -->
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      /* عام */
+      body {
+        font-family: "Cairo", Arial, sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #eee;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background 0.5s ease;
+      }
+      body.light {
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+        color: #222;
+      }
+
+      .container {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 30px 40px;
+        border-radius: 20px;
+        max-width: 720px;
+        width: 95%;
+        box-shadow: 0 0 30px #00bfffaa;
+        backdrop-filter: blur(10px);
+        transition: background 0.5s ease, color 0.5s ease;
+      }
+      body.light .container {
+        background: #fff;
+        color: #222;
+        box-shadow: 0 0 30px #1e90ff44;
+        backdrop-filter: none;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        font-size: 2.3rem;
+        text-shadow: 0 0 5px #00bfffcc;
+      }
+      body.light h2 {
+        text-shadow: none;
+        color: #1e3c72;
+      }
+
+      form label {
+        font-weight: 700;
+        margin-top: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+
+      form label .info-icon {
+        color: #00bfff;
+        cursor: help;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+      }
+      form label .info-icon:hover {
+        color: #66d9ff;
+      }
+
+      select,
+      input[type="checkbox"] {
+        margin-top: 6px;
+        border-radius: 12px;
+        border: none;
+        padding: 12px 18px;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        transition: box-shadow 0.3s ease;
+        background: rgba(255 255 255 / 0.1);
+        color: inherit;
+        outline: none;
+        cursor: pointer;
+        user-select: none;
+      }
+      body.light select {
+        background: #f0f8ff;
+        color: #333;
+        box-shadow: none;
+      }
+      select:focus {
+        box-shadow: 0 0 10px #00bfffaa;
+        background: rgba(255 255 255 / 0.2);
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+        transform: scale(1.3);
+        margin-left: 12px;
+        cursor: pointer;
+        accent-color: #00bfff;
+        filter: drop-shadow(0 0 1px #00bfff);
+      }
+
+      /* خاص بالخيارات المتعددة */
+      .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 6px;
+      }
+      .checkbox-group label {
+        flex: 1 1 45%;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        margin-top: 30px;
+        padding: 16px 0;
+        border-radius: 15px;
+        border: none;
+        background: linear-gradient(90deg, #00bfff, #1e90ff);
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 8px 20px #00bfff88;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        user-select: none;
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #1e90ff, #00bfff);
+        box-shadow: 0 10px 25px #1e90ffcc;
+      }
+      button[type="submit"]:disabled {
+        background: #777;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      /* زر عرض النتائج */
+      .results-btn {
+        margin-top: 30px;
+        background: #222;
+        border-radius: 12px;
+        padding: 14px 24px;
+        color: #00bfff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: 2px solid #00bfff;
+        cursor: pointer;
+        transition: background 0.3s ease, color 0.3s ease;
+        display: inline-block;
+        text-align: center;
+        user-select: none;
+        text-decoration: none;
+      }
+      .results-btn:hover {
+        background: #00bfff;
+        color: #222;
+      }
+
+      /* رسالة الخطأ */
+      .error-msg {
+        color: #ff5252;
+        font-size: 0.9rem;
+        margin-top: 4px;
+        font-weight: 700;
+        display: none;
+      }
+
+      /* صندوق معلومات التلميحات */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 220px;
+        background-color: #00bfffcc;
+        color: #000;
+        text-align: right;
+        border-radius: 8px;
+        padding: 10px;
+        position: absolute;
+        z-index: 1;
+        top: -5px;
+        right: 105%;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.9rem;
+        user-select: none;
+      }
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      /* رسالة الإرسال */
+      #loadingMessage {
+        margin-top: 20px;
+        color: #00bfff;
+        font-weight: 700;
+        text-align: center;
+        font-size: 1.1rem;
+        display: none;
+      }
+
+      /* الوضع الليلي */
+      .dark-mode {
+        background: #121212 !important;
+        color: #ccc !important;
+      }
+      .dark-mode .container {
+        background: rgba(10, 10, 10, 0.85) !important;
+        box-shadow: 0 0 25px #00bfffbb !important;
+        color: #ccc !important;
+      }
+      .dark-mode select {
+        background: #222 !important;
+        color: #eee !important;
+        border: none !important;
+        box-shadow: 0 0 8px #00bfffcc !important;
+      }
+      .dark-mode input[type="checkbox"] {
+        accent-color: #00bfff !important;
+      }
+      .dark-mode button[type="submit"] {
+        background: linear-gradient(90deg, #1e90ff, #00bfff) !important;
+        color: #fff !important;
+        box-shadow: 0 8px 20px #1e90ffcc !important;
+      }
+      .dark-mode button[type="submit"]:hover {
+        background: linear-gradient(90deg, #00bfff, #1e90ff) !important;
+        box-shadow: 0 10px 25px #00bfffcc !important;
+      }
+
+      /* زر الوضع الليلي */
+      #darkModeToggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #00bfff;
+        color: #222;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.2rem;
+        user-select: none;
+        box-shadow: 0 5px 15px #00bfffaa;
+        transition: background 0.3s ease;
+        z-index: 10000;
+      }
+      #darkModeToggle:hover {
+        background: #1e90ff;
+        color: #fff;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .container {
+          padding: 20px 25px;
+        }
+        h2 {
+          font-size: 1.8rem;
+        }
+        button[type="submit"] {
+          font-size: 1.1rem;
+        }
+        .results-btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <button id="darkModeToggle" aria-label="تبديل الوضع الليلي">🌙</button>
+
+    <div
+      class="container"
+      role="main"
+      aria-label="نموذج استبيان التربية الإسلامية"
+    >
+      <h2>استبيان: التربية الإسلامية وتنمية الوعي الأخلاقي الرقمي</h2>
+
+      <form id="surveyForm" action="/submit" method="POST" novalidate>
+        <!-- العمر -->
+        <label for="age"
+          >كم عمرك؟
+          <span class="tooltip">
+            <i class="fas fa-info-circle info-icon"></i>
+            <span class="tooltiptext">اختر الفئة العمرية التي تنتمي إليها</span>
+          </span>
+        </label>
+        <select name="age" id="age" required>
+          <option value="" disabled selected>اختر عمرك</option>
+          <option value="أقل من 15 سنة">أقل من 15 سنة</option>
+          <option value="من 15 سنة إلى 18 سنة">من 15 سنة إلى 18 سنة</option>
+          <option value="أكثر من 18 سنة">أكثر من 18 سنة</option>
+        </select>
+        <div class="error-msg" id="ageError">يرجى اختيار العمر.</div>
+
+        <!-- الجنس -->
+        <label for="gender">ما هو جنسك؟</label>
+        <select name="gender" id="gender" required>
+          <option value="" disabled selected>اختر جنسك</option>
+          <option value="ذكر">ذكر</option>
+          <option value="أنثى">أنثى</option>
+        </select>
+        <div class="error-msg" id="genderError">يرجى اختيار الجنس.</div>
+
+        <!-- المستوى الدراسي -->
+        <label for="level">المستوى الدراسي:</label>
+        <select name="level" id="level" required>
+          <option value="" disabled selected>اختر مستواك الدراسي</option>
+          <option value="إعدادي">إعدادي</option>
+          <option value="الثانوي">الثانوي</option>
+          <option value="جامعي">جامعي</option>
+        </select>
+        <div class="error-msg" id="levelError">
+          يرجى اختيار المستوى الدراسي.
+        </div>
+
+        <!-- باقي الأسئلة بشكل مماثل مع التلميحات -->
+        <label for="q1"
+          >هل سمعت من قبل عن مصطلح "الأخلاق الرقمية" أو "الوعي الأخلاقي
+          الرقمي"؟</label
+        >
+        <select name="q1" id="q1" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+        <div class="error-msg" id="q1Error">يرجى اختيار جواب.</div>
+
+        <label for="q2"
+          >هل سبق لك أن درست موضوع "الأخلاق في الإسلام" ضمن دروس التربية
+          الإسلامية؟</label
+        >
+        <select name="q2" id="q2" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+        <div class="error-msg" id="q2Error">يرجى اختيار جواب.</div>
+
+        <label for="q3"
+          >هل تعتقد أن دروس التربية الإسلامية تؤثر في سلوكك داخل الفضاء
+          الرقمي؟</label
+        >
+        <select name="q3" id="q3" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="تؤثر بشكل كبير">تؤثر بشكل كبير</option>
+          <option value="تؤثر أحيانا">تؤثر أحيانا</option>
+          <option value="لا تؤثر">لا تؤثر</option>
+        </select>
+        <div class="error-msg" id="q3Error">يرجى اختيار جواب.</div>
+
+        <label for="q4"
+          >من وجهة نظرك، هل توجد علاقة بين التربية الإسلامية والأخلاق
+          الرقمية؟</label
+        >
+        <select name="q4" id="q4" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+        <div class="error-msg" id="q4Error">يرجى اختيار جواب.</div>
+
+        <!-- q5 متعدد -->
+        <label
+          >ما القيم الإسلامية التي تنطبق على التعامل الرقمي؟ (يمكن اختيار أكثر
+          من واحدة)</label
+        >
+        <div class="checkbox-group">
+          <label
+            ><input type="checkbox" name="q5[]" value="الصدق" /> الصدق</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="الأمانة" />
+            الأمانة</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="احترام الخصوصية" />
+            احترام الخصوصية</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="التعاطف والرفق" />
+            التعاطف والرفق</label
+          >
+          <label
+            ><input type="checkbox" name="q5[]" value="تجنب الغيبة والنميمة" />
+            تجنب الغيبة والنميمة</label
+          >
+        </div>
+        <div class="error-msg" id="q5Error">
+          يرجى اختيار قيمة واحدة على الأقل.
+        </div>
+
+        <label for="q6"
+          >هل ساعدتك الأنشطة التعليمية في فهم القيم الأخلاقية الرقمية؟</label
+        >
+        <select name="q6" id="q6" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+          <option value="لا أتذكر">لا أتذكر</option>
+        </select>
+        <div class="error-msg" id="q6Error">يرجى اختيار جواب.</div>
+
+        <label for="q7">كيف تتصرف عندما ترى منشورًا عنيفًا أو غير لائق؟</label>
+        <select name="q7" id="q7" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="أشارك به">أشارك به</option>
+          <option value="أتجاهله">أتجاهله</option>
+          <option value="أبلغ عنه أو أحذره">أبلغ عنه أو أحذره</option>
+        </select>
+        <div class="error-msg" id="q7Error">يرجى اختيار جواب.</div>
+
+        <label for="q8"
+          >هل تعتبر نشر الصور والمعلومات الشخصية على الإنترنت تصرفًا:</label
+        >
+        <select name="q8" id="q8" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="عاديا">عاديا</option>
+          <option value="محفوفا بالمخاطر">محفوفا بالمخاطر</option>
+          <option value="لا أعلم">لا أعلم</option>
+        </select>
+        <div class="error-msg" id="q8Error">يرجى اختيار جواب.</div>
+
+        <label for="q9"
+          >ما هو مصدر توجيهك الأساسي في التمييز بين الصواب والخطأ في الفضاء
+          الرقمي؟</label
+        >
+        <select name="q9" id="q9" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="الأسرة">الأسرة</option>
+          <option value="المدرسة/ مادة التربية الاسلامية">
+            المدرسة/ مادة التربية الاسلامية
+          </option>
+          <option value="الأصدقاء">الأصدقاء</option>
+          <option value="تجارب شخصية">تجارب شخصية</option>
+        </select>
+        <div class="error-msg" id="q9Error">يرجى اختيار جواب.</div>
+
+        <label for="q10"
+          >هل ينبغي إدراج مواضيع "الأخلاق الرقمية" ضمن دروس التربية
+          الإسلامية؟</label
+        >
+        <select name="q10" id="q10" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="نعم، ضروري جدا">نعم، ضروري جدا</option>
+          <option value="نعم، لكن بشكل جزئي">نعم، لكن بشكل جزئي</option>
+          <option value="لا أرى ضرورة">لا أرى ضرورة</option>
+        </select>
+        <div class="error-msg" id="q10Error">يرجى اختيار جواب.</div>
+
+        <label for="q11"
+          >هل سبق أن ندمت على تصرف قمت به في الإنترنت وتبيّن أنه منافٍ للأخلاق
+          الإسلامية؟</label
+        >
+        <select name="q11" id="q11" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+        </select>
+        <div class="error-msg" id="q11Error">يرجى اختيار جواب.</div>
+
+        <label for="q12">كيف يمكن تعزيز الأخلاق الرقمية بين التلاميذ؟</label>
+        <select name="q12" id="q12" required>
+          <option value="" disabled selected>اختر جوابك</option>
+          <option value="عن طريق التربية الاسلامية">
+            عن طريق التربية الاسلامية
+          </option>
+          <option value="عبر حملات تحسيسية">عبر حملات تحسيسية</option>
+          <option value="من خلال الأسرة فقط">من خلال الأسرة فقط</option>
+          <option value="لا أعلم">لا أعلم</option>
+        </select>
+        <div class="error-msg" id="q12Error">يرجى اختيار جواب.</div>
+
+        <button type="submit" id="submitBtn">
+          <i class="fas fa-paper-plane"></i> إرسال
+        </button>
+
+        <div id="loadingMessage">جارٍ إرسال البيانات... يرجى الانتظار</div>
+      </form>
+
+      <a
+        href="/results"
+        class="results-btn"
+        role="button"
+        aria-label="عرض نتائج الاستبيان"
+      >
+        <i class="fas fa-chart-bar"></i> عرض نتائج الاستبيان 📊
+      </a>
+    </div>
+
+    <script>
+      // الوضع الليلي مع حفظ التفضيل
+      const toggleBtn = document.getElementById("darkModeToggle");
+      const body = document.body;
+
+      if (localStorage.getItem("theme") === "dark") {
+        body.classList.add("dark-mode");
+        body.classList.remove("light");
+        toggleBtn.textContent = "☀️";
+      } else {
+        body.classList.add("light");
+        toggleBtn.textContent = "🌙";
+      }
+
+      toggleBtn.addEventListener("click", () => {
+        if (body.classList.contains("dark-mode")) {
+          body.classList.remove("dark-mode");
+          body.classList.add("light");
+          localStorage.setItem("theme", "light");
+          toggleBtn.textContent = "🌙";
+        } else {
+          body.classList.add("dark-mode");
+          body.classList.remove("light");
+          localStorage.setItem("theme", "dark");
+          toggleBtn.textContent = "☀️";
+        }
+      });
+
+      // التحقق من صحة النموذج قبل الإرسال
+      const form = document.getElementById("surveyForm");
+      const loadingMessage = document.getElementById("loadingMessage");
+      const submitBtn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let valid = true;
+
+        // تحقق من كل حقل
+        const requiredFields = [
+          "age",
+          "gender",
+          "level",
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q6",
+          "q7",
+          "q8",
+          "q9",
+          "q10",
+          "q11",
+          "q12",
+        ];
+
+        requiredFields.forEach((id) => {
+          const el = document.getElementById(id);
+          const err = document.getElementById(id + "Error");
+          if (!el.value) {
+            err.style.display = "block";
+            valid = false;
+          } else {
+            err.style.display = "none";
+          }
+        });
+
+        // تحقق من q5 checkbox (يجب اختيار واحدة على الأقل)
+        const q5boxes = document.querySelectorAll('input[name="q5[]"]:checked');
+        const q5Error = document.getElementById("q5Error");
+        if (q5boxes.length === 0) {
+          q5Error.style.display = "block";
+          valid = false;
+        } else {
+          q5Error.style.display = "none";
+        }
+
+        if (!valid) {
+          // تمرير إلى أول خطأ
+          const firstError = document.querySelector(
+            '.error-msg[style*="block"]'
+          );
+          if (firstError)
+            firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+
+        // عند التأكد من صحة البيانات: إظهار رسالة تحميل وتعطيل الزر
+        loadingMessage.style.display = "block";
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+        // إرسال النموذج بعد تأخير خفيف لمحاكاة تحميل
+        setTimeout(() => {
+          form.submit();
+        }, 800);
+      });
+    </script>
+  </body>
+</html>
