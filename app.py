@@ -2,9 +2,7 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import mysql.connector
 from flask import session, redirect, url_for
-import pandas as pd
 from flask import send_file
-from fpdf import FPDF
 from flask import send_file
 import io
 
@@ -85,77 +83,6 @@ def init_db():
     conn.close()
 
 
-@app.route('/export_excel')
-def export_excel():
-    conn = get_db_connection()
-    df = pd.read_sql("SELECT * FROM responses", conn)
-    conn.close()
-
-    # لا حاجة لتحويل الأعمدة كلها إلى نصوص، اتركها كما هي
-    # df = df.astype(str)  # احذف هذا السطر
-
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False, sheet_name='Responses')
-        workbook  = writer.book
-        worksheet = writer.sheets['Responses']
-
-        # تعيين خط يدعم العربية (Arial Unicode MS أو أي خط عربي متوفر)
-        cell_format = workbook.add_format({'font_name': 'Arial Unicode MS'})
-        worksheet.set_column('A:Z', 20, cell_format)  # ضبط عرض الأعمدة
-
-    output.seek(0)
-
-    return send_file(
-        output,
-        as_attachment=True,
-        download_name='survey_responses.xlsx',
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-
-
-
-
-from fpdf import FPDF
-
-@app.route('/export_pdf')
-def export_pdf():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM responses")
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    pdf = FPDF()
-    pdf.add_page()
-
-    # إضافة خط عربي
-    pdf.add_font('DejaVu', '', 'DejaVuSans.ttf', uni=True)
-    pdf.set_font('DejaVu', '', 12)
-
-    headers = ['البريد الإلكتروني', 'العمر', 'الجنس', 'السؤال 1', 'السؤال 2']
-    col_width = pdf.w / len(headers) - 10
-
-    # كتابة رؤوس الأعمدة
-    for header in headers:
-        pdf.cell(col_width, 10, header, border=1, align='C')
-    pdf.ln()
-
-    # كتابة البيانات
-    for row in data:
-        pdf.cell(col_width, 10, row.get('email', ''), border=1)
-        pdf.cell(col_width, 10, row.get('age', ''), border=1)
-        pdf.cell(col_width, 10, row.get('gender', ''), border=1)
-        pdf.cell(col_width, 10, row.get('q1', ''), border=1)
-        pdf.cell(col_width, 10, row.get('q2', ''), border=1)
-        pdf.ln()
-
-    output = io.BytesIO()
-    pdf.output(output)
-    output.seek(0)
-
-    return send_file(output, as_attachment=True, download_name='survey_responses.pdf', mimetype='application/pdf')
 
 @app.route('/')
 def index():
