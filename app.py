@@ -25,20 +25,21 @@ def create_database_if_not_exists():
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host='localhost',
-        user='root',
+        host='bibra12.mysql.pythonanywhere-services.com',
+        user='bibra12',
         password='MysqL#Admin2025@',
-        database='survey_db',
+        database='bibra12$survey_db',  # اسم قاعدة البيانات يجب أن يحتوي على اسم المستخدم كـ prefix
         charset='utf8mb4',
         use_unicode=True,
-        auth_plugin='mysql_native_password'  # حسب الحاجة في بيئتك
+        auth_plugin='mysql_native_password'
     )
     cursor = conn.cursor()
     cursor.execute("SET NAMES utf8mb4;")
     cursor.execute("SET CHARACTER SET utf8mb4;")
     cursor.execute("SET character_set_connection = utf8mb4;")
-    cursor.close()  # هذا جيد، ولكن لا تغلق الـ cursor قبل الانتهاء من استخدام الاتصال
+    cursor.close()
     return conn
+
 
 
 def init_db():
